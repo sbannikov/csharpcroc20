@@ -19,12 +19,19 @@ namespace CrocCSharpBot
         private TelegramBotClient client;
 
         /// <summary>
+        /// Объект, осуществляющий протоколирование
+        /// </summary>
+        private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
+
+        /// <summary>
         /// Конструктор без параметров
         /// </summary>
         public Bot()
         {
             // Создание клиента для Telegram
-            client = new TelegramBotClient("1181297092:AAEv84wsLW-sKDuw3JMXpLNR8xC6lJk2HtE");
+            client = new TelegramBotClient("1181297092:AAGGpd_9m1yCVNYwJeCrJP2AfD9YnqVwLBY");
+            var user = client.GetMeAsync();
+            string name = user.Result.Username;
             client.OnMessage += MessageProcessor;
         }
 
@@ -35,12 +42,13 @@ namespace CrocCSharpBot
         /// <param name="e"></param>
         private void MessageProcessor(object sender, Telegram.Bot.Args.MessageEventArgs e)
         {
+            log.Trace("|<- MessageProcessor");
             switch (e.Message.Type)
             {
                 case Telegram.Bot.Types.Enums.MessageType.Contact: // телефон
                     string phone = e.Message.Contact.PhoneNumber;
                     client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон: {phone}");
-                    Console.WriteLine(phone);
+                    log.Trace(phone);
                     break;
 
                 case Telegram.Bot.Types.Enums.MessageType.Text: // текстовое сообщение
@@ -51,7 +59,7 @@ namespace CrocCSharpBot
                     else
                     {
                         client.SendTextMessageAsync(e.Message.Chat.Id, $"Ты сказал мне: {e.Message.Text}");
-                        Console.WriteLine(e.Message.Text);
+                        log.Trace(e.Message.Text);
                     }
                     break;
 
@@ -60,6 +68,7 @@ namespace CrocCSharpBot
                     Console.WriteLine(e.Message.Type);
                     break;
             }
+            log.Trace("|-> MessageProcessor");
         }
 
         /// <summary>
