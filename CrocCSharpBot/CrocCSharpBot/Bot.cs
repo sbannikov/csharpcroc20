@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -119,34 +120,70 @@ namespace CrocCSharpBot
         /// <param name="message"></param>
         private void CommandProcessor(Telegram.Bot.Types.Message message)
         {
-            // Отрезаем первый символ (который должен быть '/')
-            string command = message.Text.Substring(1).ToLower();
-
-            switch (command)
+            try
             {
-                case "start":
-                    var button = new KeyboardButton("Поделись телефоном");
-                    button.RequestContact = true;
-                    var array = new KeyboardButton[] { button };
-                    var reply = new ReplyKeyboardMarkup(array, true, true);
-                    client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, скажи мне свой телефон", replyMarkup: reply);
-                    break;
+                log.Trace("|<- CommandProcessor");
 
-                case "help":
-                    string m = "Список возможных команд:\n";
-                    foreach (Commands s in Enum.GetValues(typeof(Commands)))
-                    {
-                        string cmd = s.ToString().ToLower();
-                        string descr = s.ToDescription();
-                        m += $"/{cmd} - {descr}\n";
-                    }
-                    client.SendTextMessageAsync(message.Chat.Id, m, replyMarkup: null);
-                    break;
+                // Отрезаем первый символ (который должен быть '/')
+                string command = message.Text.Substring(1).ToLower();
 
-                default:
+                // Построение имени метода для вызова
+                string method = command.Substring(0, 1).ToUpper() + command.Substring(1) + "Command";
+
+                // Ищем метод по имени
+                System.Reflection.MethodInfo info = GetType().GetMethod(method);
+                if (info == null)
+                {
                     client.SendTextMessageAsync(message.Chat.Id, $"Я пока не понимаю команду {command}");
-                    break;
+                    return;
+                }
+
+                // Вызов метода по имени
+                info.Invoke(this, new object[] { message });
             }
+            finally
+            {
+                log.Trace("|-> CommandProcessor");
+            }
+        }
+
+        /// <summary>
+        /// Список всех команд
+        /// </summary>
+        /// <param name="message"></param>
+        public void HelpCommand(Telegram.Bot.Types.Message message)
+        {
+            string m = "Список возможных команд:\n";
+            foreach (Command s in Enum.GetValues(typeof(Command)))
+            {
+                string cmd = s.ToString().ToLower();
+                string descr = s.ToDescription();
+                m += $"/{cmd} - {descr}\n";
+            }
+            client.SendTextMessageAsync(message.Chat.Id, m, replyMarkup: null);
+        }
+
+        /// <summary>
+        /// Начало работы с ботом
+        /// </summary>
+        /// <param name="message"></param>
+        [Description("Начало работы с ботом")]
+        public void StartCommand(Telegram.Bot.Types.Message message)
+        {
+            client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, для начала прошу зарегистрироваться при помощи команды /register");
+        }
+
+        /// <summary>
+        /// Регистрация пользователя в списке
+        /// </summary>
+        /// <param name="message"></param>
+        public void RegisterCommand(Telegram.Bot.Types.Message message)
+        {
+            var button = new KeyboardButton("Поделись телефоном");
+            button.RequestContact = true;
+            var array = new KeyboardButton[] { button };
+            var reply = new ReplyKeyboardMarkup(array, true, true);
+            client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, скажи мне свой телефон", replyMarkup: reply);
         }
 
         /// <summary>
