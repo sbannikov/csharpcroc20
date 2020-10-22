@@ -31,5 +31,14 @@ namespace CrocCSharpBot.Properties {
                 return ((string)(this["Token"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("c:\\botstate.xml")]
+        public string FileName {
+            get {
+                return ((string)(this["FileName"]));
+            }
+        }
     }
 }

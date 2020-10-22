@@ -24,6 +24,11 @@ namespace CrocCSharpBot
         private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
+        /// Состояние ботаы
+        /// </summary>
+        private BotState state;
+
+        /// <summary>
         /// Конструктор без параметров
         /// </summary>
         public Bot()
@@ -34,6 +39,9 @@ namespace CrocCSharpBot
             var user = client.GetMeAsync();
             string name = user.Result.Username;
             client.OnMessage += MessageProcessor;
+
+            // Чтение сохраненного состояния из файла 
+            state = BotState.Load(Properties.Settings.Default.FileName);
         }
 
         /// <summary>
@@ -49,9 +57,26 @@ namespace CrocCSharpBot
                 switch (e.Message.Type)
                 {
                     case Telegram.Bot.Types.Enums.MessageType.Contact: // телефон
+                        if (e.Message.Contact.UserId != e.Message.Chat.Id)
+                        {
+                            client.SendTextMessageAsync(e.Message.Chat.Id, $"Некорректный контакт");
+                            return;
+                        }
                         string phone = e.Message.Contact.PhoneNumber;
                         client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон: {phone}");
                         log.Trace(phone);
+                        // Регистрация пользователя
+                        // (i) Использование инициализатора
+                        var user = new User()
+                        {
+                            ID = e.Message.Contact.UserId,
+                            FirstName = e.Message.Contact.FirstName,
+                            LastName = e.Message.Contact.LastName,
+                            UserName = e.Message.Chat.Username,
+                            PhoneNumber = phone
+                        };
+                        state.AddUser(user);
+                        state.Save(Properties.Settings.Default.FileName);
                         break;
 
                     case Telegram.Bot.Types.Enums.MessageType.Text: // текстовое сообщение
