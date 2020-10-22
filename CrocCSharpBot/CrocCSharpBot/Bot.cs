@@ -63,7 +63,6 @@ namespace CrocCSharpBot
                             return;
                         }
                         string phone = e.Message.Contact.PhoneNumber;
-                        client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон: {phone}");
                         log.Trace(phone);
                         // Регистрация пользователя
                         // (i) Использование инициализатора
@@ -75,8 +74,15 @@ namespace CrocCSharpBot
                             UserName = e.Message.Chat.Username,
                             PhoneNumber = phone
                         };
-                        state.AddUser(user);
-                        state.Save(Properties.Settings.Default.FileName);
+                        if (state.AddUser(user))
+                        {
+                            state.Save(Properties.Settings.Default.FileName);
+                            client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон добавлен в базу: {phone}");
+                        }
+                        else
+                        {
+                            client.SendTextMessageAsync(e.Message.Chat.Id, $"Твой телефон уже есть в базе: {phone}");
+                        }
                         break;
 
                     case Telegram.Bot.Types.Enums.MessageType.Text: // текстовое сообщение
@@ -124,6 +130,17 @@ namespace CrocCSharpBot
                     var array = new KeyboardButton[] { button };
                     var reply = new ReplyKeyboardMarkup(array, true, true);
                     client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, скажи мне свой телефон", replyMarkup: reply);
+                    break;
+
+                case "help":
+                    string m = "Список возможных команд:\n";
+                    foreach (Commands s in Enum.GetValues(typeof(Commands)))
+                    {
+                        string cmd = s.ToString().ToLower();
+                        string descr = s.ToDescription();
+                        m += $"/{cmd} - {descr}\n";
+                    }
+                    client.SendTextMessageAsync(message.Chat.Id, m, replyMarkup: null);
                     break;
 
                 default:

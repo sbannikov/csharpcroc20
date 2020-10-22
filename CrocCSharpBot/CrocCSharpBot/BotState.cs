@@ -24,16 +24,24 @@ namespace CrocCSharpBot
         /// Добавление пользователя в массив
         /// </summary>
         /// <param name="user"></param>
-        public void AddUser(User user)
+        public bool AddUser(User user)
         {
+            // Проверка на наличие пользователей
             if (Users == null)
             {
                 Users = new User[1] { user };
+                return true;
             }
-            else
+            else if (!Users.Where(a => a.ID == user.ID).Any())
             {
                 Array.Resize(ref Users, Users.Length + 1);
                 Users[Users.Length - 1] = user;
+                return true;
+            }
+            else
+            {
+                // Пользователь уже есть в массиве
+                return false;
             }
         }
 
@@ -44,12 +52,20 @@ namespace CrocCSharpBot
         /// <returns></returns>
         public static BotState Load(string name)
         {
-            // Объект, выполняющий сериализацию
-            XmlSerializer s = new XmlSerializer(typeof(BotState));
-            // Файл для чтения данных
-            using (XmlReader r = XmlReader.Create(name))
+            try
             {
-                return (BotState)s.Deserialize(r);
+                // Объект, выполняющий сериализацию
+                XmlSerializer s = new XmlSerializer(typeof(BotState));
+                // Файл для чтения данных
+                using (XmlReader r = XmlReader.Create(name))
+                {
+                    return (BotState)s.Deserialize(r);
+                }
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                // Файл не найден - новое пустое состояние
+                return new BotState();
             }
         }
 
