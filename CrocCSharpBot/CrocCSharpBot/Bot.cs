@@ -26,9 +26,14 @@ namespace CrocCSharpBot
         private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
-        /// Состояние ботаы
+        /// Состояние бота
         /// </summary>
         private BotState state;
+
+        /// <summary>
+        /// Таймер
+        /// </summary>
+        private System.Timers.Timer timer;
 
         /// <summary>
         /// Конструктор без параметров
@@ -44,6 +49,46 @@ namespace CrocCSharpBot
 
             // Чтение сохраненного состояния из файла 
             state = BotState.Load(Properties.Settings.Default.FileName);
+
+            // Таймер
+            timer = new System.Timers.Timer(Properties.Settings.Default.TimerTickInMilliseconds);
+            timer.Elapsed += TimerTick;
+        }
+
+        /// <summary>
+        /// Событие таймера
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void TimerTick(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            try
+            {
+                timer.Stop();
+                // Текущая метка времени
+                DateTime now = DateTime.Now;
+                // Проверка на неактивных пользователей
+                foreach (User user in state.Users)
+                {
+                    double delay = (now - user.TimeStamp).TotalSeconds;
+                    if ((delay > Properties.Settings.Default.TimeOutInSeconds) &&
+                        (user.State != UserState.None))
+                    {
+                        user.State = UserState.None;
+                        client.SendTextMessageAsync(user.ID, $"Я скучаю, ты про меня забыл");
+                        // Сохранить состояние бота
+                        state.Save(Properties.Settings.Default.FileName);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                log.Warn(ex);
+            }
+            finally
+            {
+                timer.Start();
+            }
         }
 
         /// <summary>
@@ -56,6 +101,12 @@ namespace CrocCSharpBot
             try
             {
                 log.Trace("|<- MessageProcessor");
+
+                // Фиксируем факт взаимодействия с пользователем
+                User user = state[e.Message.Chat.Id];
+                user.TimeStamp = DateTime.Now;
+                // Сохранить состояние бота
+                state.Save(Properties.Settings.Default.FileName);
 
                 // Построение имени метода для вызова
                 string method = $"{e.Message.Type}Processor";
@@ -105,6 +156,16 @@ namespace CrocCSharpBot
         /// <param name="message"></param>
         public void ContactProcessor(Telegram.Bot.Types.Message message)
         {
+            User user = state[message.Chat.Id];
+
+            // Проверка состояния пользователя
+            if (user.State != UserState.Register)
+            {
+                client.SendTextMessageAsync(message.Chat.Id, $"Мне сейчас это не нужно");
+                return;
+            }
+
+            // Проверка на подмену контакта
             if (message.Contact.UserId != message.Chat.Id)
             {
                 client.SendTextMessageAsync(message.Chat.Id, $"Некорректный контакт");
@@ -113,24 +174,16 @@ namespace CrocCSharpBot
             string phone = message.Contact.PhoneNumber;
             log.Trace(phone);
             // Регистрация пользователя
-            // (i) Использование инициализатора
-            var user = new User()
-            {
-                ID = message.Contact.UserId,
-                FirstName = message.Contact.FirstName,
-                LastName = message.Contact.LastName,
-                UserName = message.Chat.Username,
-                PhoneNumber = phone
-            };
-            if (state.AddUser(user))
-            {
-                state.Save(Properties.Settings.Default.FileName);
-                client.SendTextMessageAsync(message.Chat.Id, $"Твой телефон добавлен в базу: {phone}");
-            }
-            else
-            {
-                client.SendTextMessageAsync(message.Chat.Id, $"Твой телефон уже есть в базе: {phone}");
-            }
+            user.FirstName = message.Contact.FirstName;
+            user.LastName = message.Contact.LastName;
+            user.UserName = message.Chat.Username;
+            user.PhoneNumber = phone;
+
+            // Возврат к базовому состоянию пользователя
+            user.State = UserState.None;
+
+            state.Save(Properties.Settings.Default.FileName);
+            client.SendTextMessageAsync(message.Chat.Id, $"Твой телефон добавлен в базу: {phone}");
         }
 
         /// <summary>
@@ -198,28 +251,46 @@ namespace CrocCSharpBot
         /// <param name="message"></param>
         public void RegisterCommand(Telegram.Bot.Types.Message message)
         {
+            User user = state[message.Chat.Id];
+
+            // Проверка на наличие номера телефона
+            if (!string.IsNullOrEmpty(user.PhoneNumber))
+            {
+                client.SendTextMessageAsync(message.Chat.Id, $"{message.Chat.FirstName}, ты уже зарегистрирован", replyMarkup: null);
+                return;
+            }
+
             var button = new KeyboardButton("Поделись телефоном");
             button.RequestContact = true;
             var array = new KeyboardButton[] { button };
             var reply = new ReplyKeyboardMarkup(array, true, true);
             client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, скажи мне свой телефон", replyMarkup: reply);
+            // Задать состояние пользователя - ждем регистрационных данных
+            user.State = UserState.Register;
+            // Сохранить состояние бота
+            state.Save(Properties.Settings.Default.FileName);
         }
 
         /// <summary>
-        /// Запуск приёма сообщений
+        /// Запуск бота
         /// </summary>
         public void Start()
         {
             // Запуск приема сообщений
             client.StartReceiving();
+            // Запуск таймера
+            timer.Start();
         }
 
         /// <summary>
-        /// Останов приёма сообщений
+        /// Останов бота
         /// </summary>
         public void Stop()
         {
+            // Останов приёма сообщений
             client.StopReceiving();
+            // Останов таймера
+            timer.Stop();
         }
     }
 }

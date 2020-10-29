@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Resources;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
@@ -21,9 +22,34 @@ namespace CrocCSharpBot
         public User[] Users;
 
         /// <summary>
+        /// Индексатор по идентификатору пользователя
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя</param>
+        /// <returns></returns>
+        public User this[long id]
+        {
+            get
+            {
+                User user = Users.Where(a => a.ID == id).FirstOrDefault();
+                if (user == null)
+                {
+                    // Создание нового пользователя; всё, что мы знаем - его идентификатор
+                    user = new User()
+                    {
+                        ID = id
+                    };
+                    Array.Resize(ref Users, Users.Length + 1);
+                    Users[Users.Length - 1] = user;
+                }
+                return user;
+            }
+        }
+
+        /// <summary>
         /// Добавление пользователя в массив
         /// </summary>
         /// <param name="user"></param>
+        [Obsolete("Следует использовать индексатор [id]")]
         public bool AddUser(User user)
         {
             // Проверка на наличие пользователей

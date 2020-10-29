@@ -8,5 +8,11 @@
     <Setting Name="FileName" Type="System.String" Scope="Application">
       <Value Profile="(Default)">c:\botstate.xml</Value>
     </Setting>
+    <Setting Name="TimerTickInMilliseconds" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">1000</Value>
+    </Setting>
+    <Setting Name="TimeOutInSeconds" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
