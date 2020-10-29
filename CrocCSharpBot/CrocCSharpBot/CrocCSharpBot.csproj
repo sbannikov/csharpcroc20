@@ -60,6 +60,7 @@
     <Reference Include="System.IO.Compression" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -73,6 +74,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bot.cs" />
+    <Compile Include="BotService.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BotService.Designer.cs">
+      <DependentUpon>BotService.cs</DependentUpon>
+    </Compile>
     <Compile Include="BotState.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="EnumExtender.cs" />
@@ -107,6 +114,11 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="BotService.resx">
+      <DependentUpon>BotService.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
