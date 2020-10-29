@@ -187,12 +187,20 @@ namespace CrocCSharpBot
         }
 
         /// <summary>
-        /// Запуск бота
+        /// Запуск приёма сообщений
         /// </summary>
-        public void Run()
+        public void Start()
         {
             // Запуск приема сообщений
             client.StartReceiving();
+        }
+
+        /// <summary>
+        /// Останов приёма сообщений
+        /// </summary>
+        public void Stop()
+        {
+            client.StopReceiving();
         }
     }
 }
