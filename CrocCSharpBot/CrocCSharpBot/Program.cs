@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.ServiceProcess;
+using System.Configuration.Install;
 
 namespace CrocCSharpBot
 {
@@ -27,6 +29,9 @@ namespace CrocCSharpBot
                 // Приведение к строчным буквам
                 arg1 = arg1.ToLower();
 
+                // Имя исполняемого файла сервиса
+                string name = Assembly.GetEntryAssembly().Location;
+
                 switch (arg1)
                 {
                     case "console":
@@ -34,6 +39,18 @@ namespace CrocCSharpBot
                         bot = new Bot();
                         bot.Start();
                         log.Info("Запуск бота в консольном режиме");
+                        break;
+
+                    case "install":
+                        // Установка службы операционной системы
+                        ManagedInstallerClass.InstallHelper(new string[] { name });
+                        break;
+
+                    case "uninstall":
+                    case "remove":
+                    case "delete":
+                        // Удаление службы операционной системы
+                        ManagedInstallerClass.InstallHelper(new string[] { "/u", name });
                         break;
 
                     case "":
