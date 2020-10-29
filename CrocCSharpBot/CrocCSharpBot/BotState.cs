@@ -25,7 +25,7 @@ namespace CrocCSharpBot
         /// Индексатор по идентификатору пользователя
         /// </summary>
         /// <param name="id">Идентификатор пользователя</param>
-        /// <returns></returns>
+        /// <returns>Всегда возвращает пользователя, создает его при необходимости</returns>
         public User this[long id]
         {
             get
