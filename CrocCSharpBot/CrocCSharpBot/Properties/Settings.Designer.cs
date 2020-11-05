@@ -41,27 +41,21 @@ namespace CrocCSharpBot.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1000")]
         public int TimerTickInMilliseconds {
             get {
                 return ((int)(this["TimerTickInMilliseconds"]));
             }
-            set {
-                this["TimerTickInMilliseconds"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("5")]
         public int TimeOutInSeconds {
             get {
                 return ((int)(this["TimeOutInSeconds"]));
-            }
-            set {
-                this["TimeOutInSeconds"] = value;
             }
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot;
@@ -36,6 +37,16 @@ namespace CrocCSharpBot
         private System.Timers.Timer timer;
 
         /// <summary>
+        /// Управляющий сервис
+        /// </summary>
+        private ControlService control;
+
+        /// <summary>
+        /// Домик для сервиса
+        /// </summary>
+        private ServiceHost host;
+
+        /// <summary>
         /// Конструктор без параметров
         /// </summary>
         public Bot()
@@ -53,6 +64,10 @@ namespace CrocCSharpBot
             // Таймер
             timer = new System.Timers.Timer(Properties.Settings.Default.TimerTickInMilliseconds);
             timer.Elapsed += TimerTick;
+
+            // Сервис
+            control = new ControlService();
+            host = new ServiceHost(control);
         }
 
         /// <summary>
@@ -280,6 +295,8 @@ namespace CrocCSharpBot
             client.StartReceiving();
             // Запуск таймера
             timer.Start();
+            // Открытие хоста сервиса
+            host.Open();
         }
 
         /// <summary>
@@ -287,6 +304,8 @@ namespace CrocCSharpBot
         /// </summary>
         public void Stop()
         {
+            // Закрытие хоста сервиса
+            host.Close();
             // Останов приёма сообщений
             client.StopReceiving();
             // Останов таймера

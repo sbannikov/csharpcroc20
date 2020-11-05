@@ -36,6 +36,7 @@
             this.service = new System.ServiceProcess.ServiceController();
             this.list = new System.Windows.Forms.ListBox();
             this.timer = new System.Windows.Forms.Timer(this.components);
+            this.query = new System.Windows.Forms.ToolStripButton();
             this.tool.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,10 +45,11 @@
             this.tool.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.tool.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.startButton,
-            this.stopButton});
+            this.stopButton,
+            this.query});
             this.tool.Location = new System.Drawing.Point(0, 0);
             this.tool.Name = "tool";
-            this.tool.Size = new System.Drawing.Size(733, 27);
+            this.tool.Size = new System.Drawing.Size(733, 31);
             this.tool.TabIndex = 0;
             this.tool.Text = "toolStrip1";
             // 
@@ -56,7 +58,7 @@
             this.startButton.Image = ((System.Drawing.Image)(resources.GetObject("startButton.Image")));
             this.startButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(101, 24);
+            this.startButton.Size = new System.Drawing.Size(101, 28);
             this.startButton.Text = "Запустить";
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
@@ -78,14 +80,23 @@
             this.list.Dock = System.Windows.Forms.DockStyle.Fill;
             this.list.FormattingEnabled = true;
             this.list.ItemHeight = 16;
-            this.list.Location = new System.Drawing.Point(0, 27);
+            this.list.Location = new System.Drawing.Point(0, 31);
             this.list.Name = "list";
-            this.list.Size = new System.Drawing.Size(733, 425);
+            this.list.Size = new System.Drawing.Size(733, 421);
             this.list.TabIndex = 1;
             // 
             // timer
             // 
             this.timer.Tick += new System.EventHandler(this.timer_Tick);
+            // 
+            // query
+            // 
+            this.query.Image = ((System.Drawing.Image)(resources.GetObject("query.Image")));
+            this.query.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.query.Name = "query";
+            this.query.Size = new System.Drawing.Size(106, 28);
+            this.query.Text = "Запросить";
+            this.query.Click += new System.EventHandler(this.query_Click);
             // 
             // MainForm
             // 
@@ -114,6 +125,7 @@
         private System.ServiceProcess.ServiceController service;
         private System.Windows.Forms.ListBox list;
         private System.Windows.Forms.Timer timer;
+        private System.Windows.Forms.ToolStripButton query;
     }
 }
 

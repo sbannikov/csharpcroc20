@@ -16,11 +16,17 @@ namespace BotControlPanel
     public partial class MainForm : Form
     {
         /// <summary>
+        /// Клиент управляющего веб-сервиса
+        /// </summary>
+        private ControlReference.ContolServiceClient client;
+
+        /// <summary>
         /// Конструктор формы
         /// </summary>
         public MainForm()
         {
             InitializeComponent();
+            client = new ControlReference.ContolServiceClient();
         }
 
         /// <summary>
@@ -128,6 +134,24 @@ namespace BotControlPanel
             finally
             {
                 timer.Enabled = true;
+            }
+        }
+
+        /// <summary>
+        /// Запрос состояния бота
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void query_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string result = client.Query();
+                list.Items.Add(result);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
     }
