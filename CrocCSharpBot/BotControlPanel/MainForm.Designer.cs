@@ -37,6 +37,8 @@
             this.list = new System.Windows.Forms.ListBox();
             this.timer = new System.Windows.Forms.Timer(this.components);
             this.query = new System.Windows.Forms.ToolStripButton();
+            this.traceOnButton = new System.Windows.Forms.ToolStripButton();
+            this.traceOffButton = new System.Windows.Forms.ToolStripButton();
             this.tool.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -46,10 +48,12 @@
             this.tool.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.startButton,
             this.stopButton,
-            this.query});
+            this.query,
+            this.traceOnButton,
+            this.traceOffButton});
             this.tool.Location = new System.Drawing.Point(0, 0);
             this.tool.Name = "tool";
-            this.tool.Size = new System.Drawing.Size(733, 31);
+            this.tool.Size = new System.Drawing.Size(1076, 27);
             this.tool.TabIndex = 0;
             this.tool.Text = "toolStrip1";
             // 
@@ -58,7 +62,7 @@
             this.startButton.Image = ((System.Drawing.Image)(resources.GetObject("startButton.Image")));
             this.startButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(101, 28);
+            this.startButton.Size = new System.Drawing.Size(101, 24);
             this.startButton.Text = "Запустить";
             this.startButton.Click += new System.EventHandler(this.startButton_Click);
             // 
@@ -80,9 +84,9 @@
             this.list.Dock = System.Windows.Forms.DockStyle.Fill;
             this.list.FormattingEnabled = true;
             this.list.ItemHeight = 16;
-            this.list.Location = new System.Drawing.Point(0, 31);
+            this.list.Location = new System.Drawing.Point(0, 27);
             this.list.Name = "list";
-            this.list.Size = new System.Drawing.Size(733, 421);
+            this.list.Size = new System.Drawing.Size(1076, 425);
             this.list.TabIndex = 1;
             // 
             // timer
@@ -94,15 +98,33 @@
             this.query.Image = ((System.Drawing.Image)(resources.GetObject("query.Image")));
             this.query.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.query.Name = "query";
-            this.query.Size = new System.Drawing.Size(106, 28);
+            this.query.Size = new System.Drawing.Size(106, 24);
             this.query.Text = "Запросить";
             this.query.Click += new System.EventHandler(this.query_Click);
+            // 
+            // traceOnButton
+            // 
+            this.traceOnButton.Image = ((System.Drawing.Image)(resources.GetObject("traceOnButton.Image")));
+            this.traceOnButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.traceOnButton.Name = "traceOnButton";
+            this.traceOnButton.Size = new System.Drawing.Size(190, 24);
+            this.traceOnButton.Text = "Включить трассировку";
+            this.traceOnButton.Click += new System.EventHandler(this.traceOnButton_Click);
+            // 
+            // traceOffButton
+            // 
+            this.traceOffButton.Image = ((System.Drawing.Image)(resources.GetObject("traceOffButton.Image")));
+            this.traceOffButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.traceOffButton.Name = "traceOffButton";
+            this.traceOffButton.Size = new System.Drawing.Size(204, 24);
+            this.traceOffButton.Text = "Остановить трассировку";
+            this.traceOffButton.Click += new System.EventHandler(this.traceOffButton_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(733, 452);
+            this.ClientSize = new System.Drawing.Size(1076, 452);
             this.Controls.Add(this.list);
             this.Controls.Add(this.tool);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -126,6 +148,8 @@
         private System.Windows.Forms.ListBox list;
         private System.Windows.Forms.Timer timer;
         private System.Windows.Forms.ToolStripButton query;
+        private System.Windows.Forms.ToolStripButton traceOnButton;
+        private System.Windows.Forms.ToolStripButton traceOffButton;
     }
 }
 

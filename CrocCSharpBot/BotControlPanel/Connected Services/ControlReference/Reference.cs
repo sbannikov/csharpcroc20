@@ -17,6 +17,12 @@ namespace BotControlPanel.ControlReference {
         
         [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContolService/Query", ReplyAction="http://tempuri.org/IContolService/QueryResponse")]
         string Query();
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContolService/StartTrace", ReplyAction="http://tempuri.org/IContolService/StartTraceResponse")]
+        void StartTrace(string ip);
+        
+        [System.ServiceModel.OperationContractAttribute(Action="http://tempuri.org/IContolService/StopTrace", ReplyAction="http://tempuri.org/IContolService/StopTraceResponse")]
+        void StopTrace();
     }
     
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.ServiceModel", "4.0.0.0")]
@@ -48,6 +54,14 @@ namespace BotControlPanel.ControlReference {
         
         public string Query() {
             return base.Channel.Query();
+        }
+        
+        public void StartTrace(string ip) {
+            base.Channel.StartTrace(ip);
+        }
+        
+        public void StopTrace() {
+            base.Channel.StopTrace();
         }
     }
 }

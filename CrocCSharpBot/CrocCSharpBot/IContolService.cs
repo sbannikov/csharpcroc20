@@ -12,5 +12,11 @@ namespace CrocCSharpBot
     {
         [OperationContract]
         string Query();
+
+        [OperationContract]
+        void StartTrace(string ip);
+
+        [OperationContract]
+        void StopTrace();
     }
 }

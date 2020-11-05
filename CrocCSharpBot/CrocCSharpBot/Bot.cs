@@ -47,6 +47,11 @@ namespace CrocCSharpBot
         private ServiceHost host;
 
         /// <summary>
+        /// Для передачи диагностики
+        /// </summary>
+        private System.Net.Sockets.UdpClient udp;
+
+        /// <summary>
         /// Конструктор без параметров
         /// </summary>
         public Bot()
@@ -66,7 +71,7 @@ namespace CrocCSharpBot
             timer.Elapsed += TimerTick;
 
             // Сервис
-            control = new ControlService();
+            control = new ControlService(this);
             host = new ServiceHost(control);
         }
 
@@ -116,6 +121,15 @@ namespace CrocCSharpBot
             try
             {
                 log.Trace("|<- MessageProcessor");
+
+                // Трассировка для консоли управления
+                if (udp != null)
+                {
+                    // Отправить пакет по UDP
+                    string udps = e.Message.Text;
+                    byte[] data = Encoding.UTF8.GetBytes(udps);
+                    int n = udp.Send(data, data.Length);
+                }
 
                 // Фиксируем факт взаимодействия с пользователем
                 User user = state[e.Message.Chat.Id];
@@ -310,6 +324,16 @@ namespace CrocCSharpBot
             client.StopReceiving();
             // Останов таймера
             timer.Stop();
+        }
+
+        public void StartTrace(string ip)
+        {
+            udp = new System.Net.Sockets.UdpClient(ip, 9999);
+        }
+
+        public void StopTrace()
+        {
+            udp = null;
         }
     }
 }
