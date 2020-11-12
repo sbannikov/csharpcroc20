@@ -23,8 +23,21 @@ namespace CrocCSharpBot
         public Database()
         {
             conn = new SqlConnection();
-            conn.ConnectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=CSHARP20;Integrated Security=SSPI;App=CrocCSharpBot;";
+            conn.ConnectionString = Properties.Settings.Default.ConnectionString;
             conn.Open();
+        }
+
+        /// <summary>
+        /// Чтение строки с обработкой NULL
+        /// </summary>
+        /// <param name="reader">Читатель</param>
+        /// <param name="column">Имя столбца запроса</param>
+        /// <returns></returns>
+        private string GetString(SqlDataReader reader, string column)
+        {
+            // Порядковый номер столбца
+            int n = reader.GetOrdinal(column);
+            return reader.IsDBNull(n) ? null : reader.GetString(n);
         }
 
         public User this[long id]
@@ -35,32 +48,36 @@ namespace CrocCSharpBot
                 SqlCommand c1 = conn.CreateCommand();
                 c1.CommandText = "SELECT [ID], [FirstName], [LastName], [UserName], [PhoneNumber], [Description], [State], [TimeStamp] FROM [Users] WHERE ID = " + id;
                 // Поиск пользователя по идентификатору в БД
-                var reader = c1.ExecuteReader();
-
-                // Проверка на наличие пользователя в БД
-                if (reader.Read())
+                using (var reader = c1.ExecuteReader())
                 {
-                    // Формирование объекта
-                    u = new User()
+                    // Проверка на наличие пользователя в БД
+                    if (reader.Read())
                     {
-                        ID = reader.GetInt64(reader.GetOrdinal("ID")),
-                        FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                        LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                        UserName = reader.GetString(reader.GetOrdinal("UserName")),
-                        PhoneNumber = reader.GetString(reader.GetOrdinal("PhoneNumber")),
-                        Description = reader.GetString(reader.GetOrdinal("Description")),
-                        State = (UserState)reader.GetInt32(reader.GetOrdinal("State")),
-                        TimeStamp = reader.GetDateTime(reader.GetOrdinal("TimeStamp"))
-                    };
-                    return u;
+                        // Формирование объекта
+                        u = new User()
+                        {
+                            ID = reader.GetInt64(reader.GetOrdinal("ID")),
+                            FirstName = GetString(reader, "FirstName"),
+                            LastName = GetString(reader, "LastName"),
+                            UserName = GetString(reader, "UserName"),
+                            PhoneNumber = GetString(reader, "PhoneNumber"),
+                            Description = GetString(reader, "Description"),
+                            State = (UserState)reader.GetInt32(reader.GetOrdinal("State")),
+                            TimeStamp = reader.GetDateTime(reader.GetOrdinal("TimeStamp"))
+                        };
+                        return u;
+                    }
                 }
                 // Создание нового пользователя; всё, что мы знаем - его идентификатор
                 u = new User()
                 {
-                    ID = id
+                    ID = id,
+                    State = UserState.None,
+                    TimeStamp = DateTime.Now
                 };
-                SqlCommand c2= conn.CreateCommand();
-                c2.CommandText = $"INSERT INTO Users (ID) VALUE ({id})";
+                SqlCommand c2 = conn.CreateCommand();
+                c2.CommandText = $"INSERT INTO Users (ID, State, TimeStamp) VALUES ({id}, 0, @ts)";
+                c2.Parameters.AddWithValue("ts", u.TimeStamp);
                 c2.ExecuteNonQuery();
                 return u;
             }
@@ -73,15 +90,31 @@ namespace CrocCSharpBot
         public List<User> GetUsers()
         {
             return new List<User>();
-        }
+        }      
 
         /// <summary>
-        /// Сохранение в файл
+        /// Сохранение пользователя в БД
         /// </summary>
-        /// <param name="filename"></param>
-        public void Save(string filename)
+        /// <param name="user"></param>
+        public void Save(User user)
         {
-            // Отдельного сохранения не требуется
+            SqlCommand cmd = conn.CreateCommand();
+            cmd.CommandText = @"UPDATE Users SET [FirstName] = @firstName
+                ,[LastName] = @lastName
+                ,[UserName] = @userName
+                ,[PhoneNumber] = @phoneNumber
+                ,[Description] = @description
+                ,[State] = @state
+                ,[TimeStamp] = @timeStamp WHERE ID = @id";
+            cmd.Parameters.AddWithValue("id", user.ID);
+            cmd.Parameters.AddWithValue("firstName", user.FirstName ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("lastName", user.LastName ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("userName", user.UserName ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("phoneNumber", user.PhoneNumber ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("description", user.Description ?? (object)DBNull.Value);
+            cmd.Parameters.AddWithValue("state", user.State);
+            cmd.Parameters.AddWithValue("timeStamp", user.TimeStamp);
+            cmd.ExecuteNonQuery();
         }
     }
 }

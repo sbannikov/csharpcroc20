@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
@@ -63,8 +64,27 @@ namespace CrocCSharpBot
             string name = user.Result.Username;
             client.OnMessage += MessageProcessor;
 
-            // Чтение сохраненного состояния из файла 
-            state = BotState.Load(Properties.Settings.Default.FileName);
+            // Инициализаиця хранилища
+            StorageType st;
+            if (!Enum.TryParse(Properties.Settings.Default.Storage, out st))
+            {
+                throw new Exception($"Некорректная конфигурация хранилища: {Properties.Settings.Default.Storage}");
+            }
+            switch (st)
+            {
+                case StorageType.FileStorage:
+                    state = BotState.Load(Properties.Settings.Default.FileName);
+                    log.Info("Используется файловое хранилище");
+                    break;
+
+                case StorageType.DatabaseStorage:
+                    state = new Database();
+                    log.Info("Используется база данных Microsoft SQL Server");
+                    break;
+
+                default:
+                    throw new Exception($"Некорректная конфигурация хранилища: {st}");
+            }
 
             // Таймер
             timer = new System.Timers.Timer(Properties.Settings.Default.TimerTickInMilliseconds);
@@ -95,9 +115,9 @@ namespace CrocCSharpBot
                         (user.State != UserState.None))
                     {
                         user.State = UserState.None;
-                        client.SendTextMessageAsync(user.ID, $"Я скучаю, ты про меня забыл");
                         // Сохранить состояние бота
-                        state.Save(Properties.Settings.Default.FileName);
+                        state.Save(user);
+                        client.SendTextMessageAsync(user.ID, $"Я скучаю, ты про меня забыл");
                     }
                 }
             }
@@ -135,7 +155,7 @@ namespace CrocCSharpBot
                 User user = state[e.Message.Chat.Id];
                 user.TimeStamp = DateTime.Now;
                 // Сохранить состояние бота
-                state.Save(Properties.Settings.Default.FileName);
+                state.Save(user);
 
                 // Построение имени метода для вызова
                 string method = $"{e.Message.Type}Processor";
@@ -210,8 +230,7 @@ namespace CrocCSharpBot
 
             // Возврат к базовому состоянию пользователя
             user.State = UserState.None;
-
-            state.Save(Properties.Settings.Default.FileName);
+            state.Save(user);
             client.SendTextMessageAsync(message.Chat.Id, $"Твой телефон добавлен в базу: {phone}");
         }
 
@@ -297,7 +316,7 @@ namespace CrocCSharpBot
             // Задать состояние пользователя - ждем регистрационных данных
             user.State = UserState.Register;
             // Сохранить состояние бота
-            state.Save(Properties.Settings.Default.FileName);
+            state.Save(user);
         }
 
         /// <summary>

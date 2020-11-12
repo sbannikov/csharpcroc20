@@ -16,6 +16,11 @@ namespace CrocCSharpBot
     public class BotState : IStorage
     {
         /// <summary>
+        /// Имя файла
+        /// </summary>
+        private string fileName;
+
+        /// <summary>
         /// Массив пользователей
         /// </summary>
         [XmlElement(ElementName = "User")]
@@ -78,6 +83,7 @@ namespace CrocCSharpBot
         /// <returns></returns>
         public static BotState Load(string name)
         {
+            BotState result;
             try
             {
                 // Объект, выполняющий сериализацию
@@ -85,35 +91,17 @@ namespace CrocCSharpBot
                 // Файл для чтения данных
                 using (XmlReader r = XmlReader.Create(name))
                 {
-                    return (BotState)s.Deserialize(r);
+                    result = (BotState)s.Deserialize(r);
                 }
             }
             catch (System.IO.FileNotFoundException)
             {
                 // Файл не найден - новое пустое состояние
-                return new BotState();
+                result = new BotState();
             }
-        }
-
-        /// <summary>
-        /// Сохранение состояния в виде XML-файла
-        /// </summary>
-        /// <param name="name">Имя файла</param>
-        public void Save(string name)
-        {
-            // Объект, выполняющий сериализацию
-            XmlSerializer s = new XmlSerializer(typeof(BotState));
-            // Настройка формирования XML-файла
-            var settings = new XmlWriterSettings()
-            {
-                Indent = true // Человекочитаемый XML
-            };
-            // Файл для записи данных
-            using (XmlWriter w = XmlWriter.Create(name, settings))
-            {
-                // Сериализация!
-                s.Serialize(w, this);
-            }
+            // Сохранить имя файла
+            result.fileName = name;
+            return result;
         }
 
         /// <summary>
@@ -123,6 +111,27 @@ namespace CrocCSharpBot
         public List<User> GetUsers()
         {
             return Users.ToList();
+        }
+
+        /// <summary>
+        /// Сохранение пользователя 
+        /// </summary>
+        /// <param name="user"></param>
+        public void Save(User user)
+        {
+            // Объект, выполняющий сериализацию
+            XmlSerializer s = new XmlSerializer(typeof(BotState));
+            // Настройка формирования XML-файла
+            var settings = new XmlWriterSettings()
+            {
+                Indent = true // Человекочитаемый XML
+            };
+            // Файл для записи данных
+            using (XmlWriter w = XmlWriter.Create(fileName, settings))
+            {
+                // Сериализация!
+                s.Serialize(w, this);
+            }
         }
     }
 }

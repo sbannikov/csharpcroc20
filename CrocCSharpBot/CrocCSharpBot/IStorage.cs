@@ -20,10 +20,10 @@ namespace CrocCSharpBot
         User this[long id] { get; }
 
         /// <summary>
-        /// Сохранение состояния в виде файла
+        /// Сохранение пользователя
         /// </summary>
-        /// <param name="name">Имя файла</param>
-        void Save(string filename);
+        /// <param name="user">Пользователь</param>
+        void Save(User user);     
 
         /// <summary>
         /// Список всех пользователей
