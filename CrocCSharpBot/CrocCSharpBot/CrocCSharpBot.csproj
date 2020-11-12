@@ -86,8 +86,10 @@
     <Compile Include="BotState.cs" />
     <Compile Include="Command.cs" />
     <Compile Include="ControlService.cs" />
+    <Compile Include="Database.cs" />
     <Compile Include="EnumExtender.cs" />
     <Compile Include="IContolService.cs" />
+    <Compile Include="IStorage.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>

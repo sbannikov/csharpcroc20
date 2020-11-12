@@ -13,7 +13,7 @@ namespace CrocCSharpBot
     /// Состояние бота
     /// </summary>
     [XmlRoot(ElementName = "State", Namespace = "http://www.orioner.ru")]
-    public class BotState
+    public class BotState : IStorage
     {
         /// <summary>
         /// Массив пользователей
@@ -114,6 +114,15 @@ namespace CrocCSharpBot
                 // Сериализация!
                 s.Serialize(w, this);
             }
+        }
+
+        /// <summary>
+        /// Список пользователей
+        /// </summary>
+        /// <returns></returns>
+        public List<User> GetUsers()
+        {
+            return Users.ToList();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace CrocCSharpBot
         /// <summary>
         /// Состояние бота
         /// </summary>
-        private BotState state;
+        private IStorage state;
 
         /// <summary>
         /// Таймер
@@ -88,7 +88,7 @@ namespace CrocCSharpBot
                 // Текущая метка времени
                 DateTime now = DateTime.Now;
                 // Проверка на неактивных пользователей
-                foreach (User user in state.Users)
+                foreach (User user in state.GetUsers())
                 {
                     double delay = (now - user.TimeStamp).TotalSeconds;
                     if ((delay > Properties.Settings.Default.TimeOutInSeconds) &&

@@ -1,0 +1,34 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+
+namespace CrocCSharpBot
+{
+    /// <summary>
+    /// Интерфейс хранилища данных
+    /// </summary>
+    public interface IStorage
+    {
+        /// <summary>
+        /// Индексатор по идентификатору пользователя
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя</param>
+        /// <returns>Всегда возвращает пользователя, создает его при необходимости</returns>
+        User this[long id] { get; }
+
+        /// <summary>
+        /// Сохранение состояния в виде файла
+        /// </summary>
+        /// <param name="name">Имя файла</param>
+        void Save(string filename);
+
+        /// <summary>
+        /// Список всех пользователей
+        /// </summary>
+        /// <returns></returns>
+        List<User> GetUsers();
+    }
+}
