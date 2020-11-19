@@ -25,7 +25,7 @@ namespace CrocCSharpBot
         /// <summary>
         /// Ведение журнала событий
         /// </summary>
-        private NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
+        private static NLog.Logger log = NLog.LogManager.GetCurrentClassLogger();
 
         /// <summary>
         /// Состояние бота
@@ -52,6 +52,55 @@ namespace CrocCSharpBot
         /// </summary>
         private System.Net.Sockets.UdpClient udp;
 
+        private static void logging(string s)
+        {
+            log.Trace(s);
+        }
+
+        /// <summary>
+        /// Хранилище данных
+        /// </summary>
+        /// <returns></returns>
+        private static IStorage Storage()
+        {
+            IStorage storage;
+            StorageType st;
+            if (!Enum.TryParse(Properties.Settings.Default.Storage, out st))
+            {
+                throw new Exception($"Некорректная конфигурация хранилища: {Properties.Settings.Default.Storage}");
+            }
+            switch (st)
+            {
+                case StorageType.FileStorage:
+                    storage = BotState.Load(Properties.Settings.Default.FileName);
+                    // log.Info("Используется файловое хранилище");
+                    break;
+
+                case StorageType.DatabaseStorage:
+                    storage = new Database();
+                    // log.Info("Используется база данных Microsoft SQL Server в режиме ADO.NET");
+                    break;
+
+                case StorageType.DatabaseFirstStorage:
+                    storage = new DBFirst();
+                    // log.Info("Используется база данных Microsoft SQL Server в режиме Entity Framework Database First");
+                    break;
+
+                case StorageType.CodeFirstStorage:
+                    var db = new DB();
+                    // Включение протоколирования SQL-запросов
+                    db.Database.Log = logging;
+                    storage = db;
+                    // log.Info("Используется база данных Microsoft SQL Server в режиме Entity Framework Code First");
+                    break;
+
+                default:
+                    throw new Exception($"Некорректная конфигурация хранилища: {st}");
+            }
+
+            return storage;
+        }
+
         /// <summary>
         /// Конструктор без параметров
         /// </summary>
@@ -65,32 +114,7 @@ namespace CrocCSharpBot
             client.OnMessage += MessageProcessor;
 
             // Инициализаиця хранилища
-            StorageType st;
-            if (!Enum.TryParse(Properties.Settings.Default.Storage, out st))
-            {
-                throw new Exception($"Некорректная конфигурация хранилища: {Properties.Settings.Default.Storage}");
-            }
-            switch (st)
-            {
-                case StorageType.FileStorage:
-                    state = BotState.Load(Properties.Settings.Default.FileName);
-                    log.Info("Используется файловое хранилище");
-                    break;
-
-                case StorageType.DatabaseStorage:
-                    state = new Database();
-                    log.Info("Используется база данных Microsoft SQL Server в режиме ADO.NET");
-                    break;
-
-                case StorageType.DatabaseFirstStorage:
-                    state = new DBFirst();
-                    log.Info("Используется база данных Microsoft SQL Server в режиме Entity Framework Database First");
-                    break;
-
-                default:
-                    throw new Exception($"Некорректная конфигурация хранилища: {st}");
-            }
-
+            state = Storage();
             // Таймер
             timer = new System.Timers.Timer(Properties.Settings.Default.TimerTickInMilliseconds);
             timer.Elapsed += TimerTick;
@@ -109,11 +133,12 @@ namespace CrocCSharpBot
         {
             try
             {
+                var db = Storage();
                 timer.Stop();
                 // Текущая метка времени
                 DateTime now = DateTime.Now;
                 // Проверка на неактивных пользователей
-                foreach (IUser user in state.GetUsers())
+                foreach (IUser user in db.GetUsers())
                 {
                     double delay = (now - user.TimeStamp).TotalSeconds;
                     if ((delay > Properties.Settings.Default.TimeOutInSeconds) &&
@@ -121,7 +146,7 @@ namespace CrocCSharpBot
                     {
                         user.State = (int)UserState.None;
                         // Сохранить состояние бота
-                        state.Save(user);
+                        db.Save(user);
                         client.SendTextMessageAsync(user.ID, $"Я скучаю, ты про меня забыл");
                     }
                 }

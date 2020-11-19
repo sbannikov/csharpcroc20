@@ -98,6 +98,7 @@
     <Compile Include="Command.cs" />
     <Compile Include="ControlService.cs" />
     <Compile Include="Database.cs" />
+    <Compile Include="DB.cs" />
     <Compile Include="DBFirst.Context.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -118,6 +119,15 @@
     <Compile Include="IContolService.cs" />
     <Compile Include="IStorage.cs" />
     <Compile Include="IUser.cs" />
+    <Compile Include="Migrations\202011191743099_InitialCreate.cs" />
+    <Compile Include="Migrations\202011191743099_InitialCreate.designer.cs">
+      <DependentUpon>202011191743099_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202011191756517_001.cs" />
+    <Compile Include="Migrations\202011191756517_001.designer.cs">
+      <DependentUpon>202011191756517_001.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
       <SubType>Component</SubType>
@@ -172,6 +182,12 @@
   <ItemGroup>
     <EmbeddedResource Include="BotService.resx">
       <DependentUpon>BotService.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011191743099_InitialCreate.resx">
+      <DependentUpon>202011191743099_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011191756517_001.resx">
+      <DependentUpon>202011191756517_001.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>

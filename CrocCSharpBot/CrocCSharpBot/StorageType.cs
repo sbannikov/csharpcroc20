@@ -20,5 +20,9 @@ namespace CrocCSharpBot
         /// База данных Entity Framework Database First
         /// </summary>
         DatabaseFirstStorage,
+        /// <summary>
+        /// База данных Entity Framework Code First
+        /// </summary>
+        CodeFirstStorage
     }
 }

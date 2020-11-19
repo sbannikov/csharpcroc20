@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Serialization;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace CrocCSharpBot
 {
@@ -13,36 +15,62 @@ namespace CrocCSharpBot
     public class User : IUser
     {
         /// <summary>
+        /// Первичный ключ
+        /// </summary>
+        [Key()]
+        [Column("ID")]
+        public Guid RecordID { get; set; }
+
+        /// <summary>
         /// Идентификатор пользователя в Telegram
         /// </summary>
         [XmlAttribute()]
+        [Column("TelegramID")]
         public long ID { get; set; }
+        
         /// <summary>
         /// Имя
         /// </summary>
         [XmlElement(ElementName = "Name")]
+        [MaxLength(255)]
         public string FirstName { get; set; }
+        
         /// <summary>
         /// Фамилия
         /// </summary>
         [XmlElement(ElementName = "Family")]
+        [MaxLength(255)]
         public string LastName { get; set; }
+        
         /// <summary>
         /// Имя пользователя (nickname)
         /// </summary>
+        [MaxLength(255)]
         public string UserName { get; set; }
+        
         /// <summary>
         /// Телефон пользователя
         /// </summary>
+        [MaxLength(63)]
         public string PhoneNumber { get; set; }
+        
         /// <summary>
         /// Описание пользователя
         /// </summary>
         [XmlText()]
+        [MaxLength(255)]
         public string Description { get; set; }
+       
+        /// <summary>
+        /// Электрическая почта
+        /// </summary>
+        [MaxLength(255)]
+        public string EMail { get; set; }
+       
         /// <summary>
         /// Состояние пользователя
         /// </summary>
+        [NotMapped()]
         public UserState UState
         {
             get
@@ -66,5 +94,13 @@ namespace CrocCSharpBot
         /// Состояние пользователя в виде целого числа для хранения в БД
         /// </summary>
         public int State { get; set; }
+
+        /// <summary>
+        /// Конструктор без параметров
+        /// </summary>
+        public User()
+        {
+            RecordID = Guid.NewGuid();
+        }
     }
 }

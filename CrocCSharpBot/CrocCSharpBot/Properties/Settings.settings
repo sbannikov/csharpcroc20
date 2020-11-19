@@ -15,7 +15,7 @@
       <Value Profile="(Default)">5</Value>
     </Setting>
     <Setting Name="Storage" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">DatabaseFirstStorage</Value>
+      <Value Profile="(Default)">CodeFirstStorage</Value>
     </Setting>
     <Setting Name="ConnectionString" Type="System.String" Scope="Application">
       <Value Profile="(Default)">Data Source=.\SQLEXPRESS;Initial Catalog=CSHARP20;Integrated Security=SSPI;App=CrocCSharpBot;</Value>

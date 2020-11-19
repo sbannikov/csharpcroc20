@@ -12,7 +12,7 @@ namespace CrocCSharpBot
     using System;
     using System.Collections.Generic;
     
-    public partial class Users 
+    public partial class Users
     {
         public long ID { get; set; }
         public string FirstName { get; set; }
@@ -22,5 +22,6 @@ namespace CrocCSharpBot
         public string Description { get; set; }
         public int State { get; set; }
         public System.DateTime TimeStamp { get; set; }
+        public string EMail { get; set; }
     }
 }
