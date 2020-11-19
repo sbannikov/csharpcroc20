@@ -79,7 +79,12 @@ namespace CrocCSharpBot
 
                 case StorageType.DatabaseStorage:
                     state = new Database();
-                    log.Info("Используется база данных Microsoft SQL Server");
+                    log.Info("Используется база данных Microsoft SQL Server в режиме ADO.NET");
+                    break;
+
+                case StorageType.DatabaseFirstStorage:
+                    state = new DBFirst();
+                    log.Info("Используется база данных Microsoft SQL Server в режиме Entity Framework Database First");
                     break;
 
                 default:
@@ -108,13 +113,13 @@ namespace CrocCSharpBot
                 // Текущая метка времени
                 DateTime now = DateTime.Now;
                 // Проверка на неактивных пользователей
-                foreach (User user in state.GetUsers())
+                foreach (IUser user in state.GetUsers())
                 {
                     double delay = (now - user.TimeStamp).TotalSeconds;
                     if ((delay > Properties.Settings.Default.TimeOutInSeconds) &&
-                        (user.State != UserState.None))
+                        (user.State != (int)UserState.None))
                     {
-                        user.State = UserState.None;
+                        user.State = (int)UserState.None;
                         // Сохранить состояние бота
                         state.Save(user);
                         client.SendTextMessageAsync(user.ID, $"Я скучаю, ты про меня забыл");
@@ -152,7 +157,7 @@ namespace CrocCSharpBot
                 }
 
                 // Фиксируем факт взаимодействия с пользователем
-                User user = state[e.Message.Chat.Id];
+                IUser user = state[e.Message.Chat.Id];
                 user.TimeStamp = DateTime.Now;
                 // Сохранить состояние бота
                 state.Save(user);
@@ -205,10 +210,10 @@ namespace CrocCSharpBot
         /// <param name="message"></param>
         public void ContactProcessor(Telegram.Bot.Types.Message message)
         {
-            User user = state[message.Chat.Id];
+            IUser user = state[message.Chat.Id];
 
             // Проверка состояния пользователя
-            if (user.State != UserState.Register)
+            if ((UserState)user.State != UserState.Register)
             {
                 client.SendTextMessageAsync(message.Chat.Id, $"Мне сейчас это не нужно");
                 return;
@@ -229,7 +234,7 @@ namespace CrocCSharpBot
             user.PhoneNumber = phone;
 
             // Возврат к базовому состоянию пользователя
-            user.State = UserState.None;
+            user.State = (int)UserState.None;
             state.Save(user);
             client.SendTextMessageAsync(message.Chat.Id, $"Твой телефон добавлен в базу: {phone}");
         }
@@ -299,7 +304,7 @@ namespace CrocCSharpBot
         /// <param name="message"></param>
         public void RegisterCommand(Telegram.Bot.Types.Message message)
         {
-            User user = state[message.Chat.Id];
+            IUser user = state[message.Chat.Id];
 
             // Проверка на наличие номера телефона
             if (!string.IsNullOrEmpty(user.PhoneNumber))
@@ -314,7 +319,7 @@ namespace CrocCSharpBot
             var reply = new ReplyKeyboardMarkup(array, true, true);
             client.SendTextMessageAsync(message.Chat.Id, $"Привет, {message.Chat.FirstName}, скажи мне свой телефон", replyMarkup: reply);
             // Задать состояние пользователя - ждем регистрационных данных
-            user.State = UserState.Register;
+            user.State = (int)UserState.Register;
             // Сохранить состояние бота
             state.Save(user);
         }

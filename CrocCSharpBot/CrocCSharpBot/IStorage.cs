@@ -17,18 +17,18 @@ namespace CrocCSharpBot
         /// </summary>
         /// <param name="id">Идентификатор пользователя</param>
         /// <returns>Всегда возвращает пользователя, создает его при необходимости</returns>
-        User this[long id] { get; }
+        IUser this[long id] { get; }
 
         /// <summary>
         /// Сохранение пользователя
         /// </summary>
         /// <param name="user">Пользователь</param>
-        void Save(User user);     
+        void Save(IUser user);     
 
         /// <summary>
         /// Список всех пользователей
         /// </summary>
         /// <returns></returns>
-        List<User> GetUsers();
+        List<IUser> GetUsers();
     }
 }

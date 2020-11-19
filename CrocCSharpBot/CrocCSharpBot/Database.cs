@@ -40,7 +40,7 @@ namespace CrocCSharpBot
             return reader.IsDBNull(n) ? null : reader.GetString(n);
         }
 
-        public User this[long id]
+        public IUser this[long id]
         {
             get
             {
@@ -62,7 +62,7 @@ namespace CrocCSharpBot
                             UserName = GetString(reader, "UserName"),
                             PhoneNumber = GetString(reader, "PhoneNumber"),
                             Description = GetString(reader, "Description"),
-                            State = (UserState)reader.GetInt32(reader.GetOrdinal("State")),
+                            UState = (UserState)reader.GetInt32(reader.GetOrdinal("State")),
                             TimeStamp = reader.GetDateTime(reader.GetOrdinal("TimeStamp"))
                         };
                         return u;
@@ -72,7 +72,7 @@ namespace CrocCSharpBot
                 u = new User()
                 {
                     ID = id,
-                    State = UserState.None,
+                    UState = UserState.None,
                     TimeStamp = DateTime.Now
                 };
                 SqlCommand c2 = conn.CreateCommand();
@@ -87,16 +87,18 @@ namespace CrocCSharpBot
         /// Список всех пользователей
         /// </summary>
         /// <returns></returns>
-        public List<User> GetUsers()
+        public List<IUser> GetUsers()
         {
-            return new List<User>();
+            // [!] надо реализовать, пока - пустой список
+            // Домашнее задание - доделать
+            return new List<IUser>();
         }      
 
         /// <summary>
         /// Сохранение пользователя в БД
         /// </summary>
         /// <param name="user"></param>
-        public void Save(User user)
+        public void Save(IUser user)
         {
             SqlCommand cmd = conn.CreateCommand();
             cmd.CommandText = @"UPDATE Users SET [FirstName] = @firstName

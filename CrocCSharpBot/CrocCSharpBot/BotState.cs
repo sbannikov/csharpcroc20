@@ -24,18 +24,18 @@ namespace CrocCSharpBot
         /// Массив пользователей
         /// </summary>
         [XmlElement(ElementName = "User")]
-        public User[] Users;
+        public IUser[] Users;
 
         /// <summary>
         /// Индексатор по идентификатору пользователя
         /// </summary>
         /// <param name="id">Идентификатор пользователя</param>
         /// <returns>Всегда возвращает пользователя, создает его при необходимости</returns>
-        public User this[long id]
+        public IUser this[long id]
         {
             get
             {
-                User user = Users.Where(a => a.ID == id).FirstOrDefault();
+                IUser user = Users.Where(a => a.ID == id).FirstOrDefault();
                 if (user == null)
                 {
                     // Создание нового пользователя; всё, что мы знаем - его идентификатор
@@ -47,32 +47,6 @@ namespace CrocCSharpBot
                     Users[Users.Length - 1] = user;
                 }
                 return user;
-            }
-        }
-
-        /// <summary>
-        /// Добавление пользователя в массив
-        /// </summary>
-        /// <param name="user"></param>
-        [Obsolete("Следует использовать индексатор [id]")]
-        public bool AddUser(User user)
-        {
-            // Проверка на наличие пользователей
-            if (Users == null)
-            {
-                Users = new User[1] { user };
-                return true;
-            }
-            else if (!Users.Where(a => a.ID == user.ID).Any())
-            {
-                Array.Resize(ref Users, Users.Length + 1);
-                Users[Users.Length - 1] = user;
-                return true;
-            }
-            else
-            {
-                // Пользователь уже есть в массиве
-                return false;
             }
         }
 
@@ -108,7 +82,7 @@ namespace CrocCSharpBot
         /// Список пользователей
         /// </summary>
         /// <returns></returns>
-        public List<User> GetUsers()
+        public List<IUser> GetUsers()
         {
             return Users.ToList();
         }
@@ -117,7 +91,7 @@ namespace CrocCSharpBot
         /// Сохранение пользователя 
         /// </summary>
         /// <param name="user"></param>
-        public void Save(User user)
+        public void Save(IUser user)
         {
             // Объект, выполняющий сериализацию
             XmlSerializer s = new XmlSerializer(typeof(BotState));

@@ -61,7 +61,7 @@ namespace CrocCSharpBot.Properties {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DatabaseStorage")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DatabaseFirstStorage")]
         public string Storage {
             get {
                 return ((string)(this["Storage"]));

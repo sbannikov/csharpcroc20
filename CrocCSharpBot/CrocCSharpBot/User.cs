@@ -10,43 +10,61 @@ namespace CrocCSharpBot
     /// <summary>
     /// Пользователь бота
     /// </summary>
-    public class User
+    public class User : IUser
     {
         /// <summary>
         /// Идентификатор пользователя в Telegram
         /// </summary>
         [XmlAttribute()]
-        public long ID;
+        public long ID { get; set; }
         /// <summary>
         /// Имя
         /// </summary>
         [XmlElement(ElementName = "Name")]
-        public string FirstName;
+        public string FirstName { get; set; }
         /// <summary>
         /// Фамилия
         /// </summary>
         [XmlElement(ElementName = "Family")]
-        public string LastName;
+        public string LastName { get; set; }
         /// <summary>
         /// Имя пользователя (nickname)
         /// </summary>
-        public string UserName;
+        public string UserName { get; set; }
         /// <summary>
         /// Телефон пользователя
         /// </summary>
-        public string PhoneNumber;
+        public string PhoneNumber { get; set; }
         /// <summary>
         /// Описание пользователя
         /// </summary>
         [XmlText()]
-        public string Description;
+        public string Description { get; set; }
         /// <summary>
         /// Состояние пользователя
         /// </summary>
-        public UserState State;
+        public UserState UState
+        {
+            get
+            {
+                if (!Enum.IsDefined(typeof(UserState), State))
+                {
+                    throw new Exception("Некорректное значение State");
+                }
+                return (UserState)State;
+            }
+            set
+            {
+                State = (int)value;
+            }
+        }
         /// <summary>
         /// Метка времени последнего сообщения от пользователя
         /// </summary>
-        public DateTime TimeStamp;
+        public DateTime TimeStamp { get; set; }
+        /// <summary>
+        /// Состояние пользователя в виде целого числа для хранения в БД
+        /// </summary>
+        public int State { get; set; }
     }
 }

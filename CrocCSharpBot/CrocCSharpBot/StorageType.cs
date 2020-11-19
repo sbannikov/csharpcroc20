@@ -12,6 +12,13 @@ namespace CrocCSharpBot
     public enum StorageType
     {
         FileStorage,
-        DatabaseStorage
+        /// <summary>
+        /// База данных ADO.NET
+        /// </summary>
+        DatabaseStorage,
+        /// <summary>
+        /// База данных Entity Framework Database First
+        /// </summary>
+        DatabaseFirstStorage,
     }
 }
