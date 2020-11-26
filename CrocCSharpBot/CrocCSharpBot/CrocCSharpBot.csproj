@@ -158,6 +158,7 @@
     <None Include="DBFirst.edmx.diagram">
       <DependentUpon>DBFirst.edmx</DependentUpon>
     </None>
+    <None Include="dialogflow.json" />
     <None Include="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
