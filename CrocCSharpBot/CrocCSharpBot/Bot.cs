@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Telegram.Bot;
 using Telegram.Bot.Args;
 using Telegram.Bot.Types.ReplyMarkups;
+using Google.Cloud.Dialogflow.V2;
+using Google.Apis.Auth.OAuth2;
 
 namespace CrocCSharpBot
 {
@@ -52,6 +54,20 @@ namespace CrocCSharpBot
         /// </summary>
         private System.Net.Sockets.UdpClient udp;
 
+        /// <summary>
+        /// Клиент DialogFlow by Google
+        /// </summary>
+        private SessionsClient dialog;
+
+        /// <summary>
+        /// Код проекта DialogFlow
+        /// </summary>
+        private string project;
+
+        /// <summary>
+        /// Диагностика для базы данных
+        /// </summary>
+        /// <param name="s"></param>
         private static void logging(string s)
         {
             log.Trace(s);
@@ -89,7 +105,8 @@ namespace CrocCSharpBot
                 case StorageType.CodeFirstStorage:
                     var db = new DB();
                     // Включение протоколирования SQL-запросов
-                    db.Database.Log = logging;
+                    // (будет очень много текста)
+                    // * db.Database.Log = logging;
                     storage = db;
                     // log.Info("Используется база данных Microsoft SQL Server в режиме Entity Framework Code First");
                     break;
@@ -122,6 +139,25 @@ namespace CrocCSharpBot
             // Сервис
             control = new ControlService(this);
             host = new ServiceHost(control);
+
+            // Инициализация клиента DialogFlow
+
+            // Имя исполняемого в текущий момент файла (.EXE)
+            string file = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            // Каталог размещения исполняемого файла
+            string path = System.IO.Path.GetDirectoryName(file);
+            // Полное имя файла конфигурации
+            string json = $@"{path}\dialogflow.json";
+            // Задание переменной среды операционной системы
+            System.Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", json);
+            // Создание клиента DialogFlow
+            dialog = SessionsClient.Create();
+            // Чтение конфигурации соединения - нужен только идентификатор проекта
+            using (var stream = new System.IO.FileStream(json,System.IO.FileMode.Open))
+            {
+                var credentials = ServiceAccountCredential.FromServiceAccountData(stream);
+                project = credentials.ProjectId;
+            }
         }
 
         /// <summary>
@@ -224,8 +260,35 @@ namespace CrocCSharpBot
             }
             else
             {
-                client.SendTextMessageAsync(message.Chat.Id, $"Ты сказал мне: {message.Text}");
                 log.Trace(message.Text);
+                // Создание запроса в DialogFlow
+                var request = new DetectIntentRequest();
+                // Задание уникального (для пользователя) сеанса
+                request.SessionAsSessionName = new SessionName(project, message.Chat.Id.ToString());
+                // Заполнение тела запроса
+                request.QueryInput = new QueryInput()
+                {
+                    Text = new TextInput()
+                    {
+                        LanguageCode = "ru",
+                        Text = message.Text
+                    }
+                };
+                // Отправим текст в DialogFlows
+                DetectIntentResponse response = dialog.DetectIntent(request);
+                // Обработка ответа
+                QueryResult qr = response.QueryResult;
+                string action = qr.Action;
+                string answer = qr.FulfillmentText;
+
+                client.SendTextMessageAsync(message.Chat.Id, $"{action}: {answer}");
+                log.Trace($"{action}: {answer}");
+
+                foreach (var p in qr.Parameters.Fields)
+                {
+                    client.SendTextMessageAsync(message.Chat.Id, $"{p.Key} = {p.Value}");
+                    log.Trace($"{p.Key} = {p.Value}");
+                }
             }
         }
 
