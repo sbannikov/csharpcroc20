@@ -39,7 +39,7 @@ namespace CrocCSharpBot
                 if (user == null)
                 {
                     // Создание нового пользователя; всё, что мы знаем - его идентификатор
-                    user = new User()
+                    user = new Storage.User()
                     {
                         ID = id
                     };

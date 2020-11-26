@@ -7,20 +7,13 @@ using System.Xml.Serialization;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace CrocCSharpBot
+namespace CrocCSharpBot.Storage
 {
     /// <summary>
     /// Пользователь бота
     /// </summary>
-    public class User : IUser
+    public class User : Entity, IUser
     {
-        /// <summary>
-        /// Первичный ключ
-        /// </summary>
-        [Key()]
-        [Column("ID")]
-        public Guid RecordID { get; set; }
-
         /// <summary>
         /// Идентификатор пользователя в Telegram
         /// </summary>
@@ -66,6 +59,11 @@ namespace CrocCSharpBot
         /// </summary>
         [MaxLength(255)]
         public string EMail { get; set; }
+
+        /// <summary>
+        /// История сообщений пользователя
+        /// </summary>
+        public virtual HashSet<MessageHistory> Messages { get; set; }
        
         /// <summary>
         /// Состояние пользователя
@@ -94,13 +92,5 @@ namespace CrocCSharpBot
         /// Состояние пользователя в виде целого числа для хранения в БД
         /// </summary>
         public int State { get; set; }
-
-        /// <summary>
-        /// Конструктор без параметров
-        /// </summary>
-        public User()
-        {
-            RecordID = Guid.NewGuid();
-        }
     }
 }

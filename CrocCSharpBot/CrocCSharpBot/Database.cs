@@ -44,7 +44,7 @@ namespace CrocCSharpBot
         {
             get
             {
-                User u;
+                Storage.User u;
                 SqlCommand c1 = conn.CreateCommand();
                 c1.CommandText = "SELECT [ID], [FirstName], [LastName], [UserName], [PhoneNumber], [Description], [State], [TimeStamp] FROM [Users] WHERE ID = " + id;
                 // Поиск пользователя по идентификатору в БД
@@ -54,7 +54,7 @@ namespace CrocCSharpBot
                     if (reader.Read())
                     {
                         // Формирование объекта
-                        u = new User()
+                        u = new Storage.User()
                         {
                             ID = reader.GetInt64(reader.GetOrdinal("ID")),
                             FirstName = GetString(reader, "FirstName"),
@@ -69,7 +69,7 @@ namespace CrocCSharpBot
                     }
                 }
                 // Создание нового пользователя; всё, что мы знаем - его идентификатор
-                u = new User()
+                u = new Storage.User()
                 {
                     ID = id,
                     UState = UserState.None,

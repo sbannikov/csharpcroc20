@@ -190,6 +190,10 @@
     <Compile Include="Migrations\202011191756517_001.designer.cs">
       <DependentUpon>202011191756517_001.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202011261734246_002.cs" />
+    <Compile Include="Migrations\202011261734246_002.Designer.cs">
+      <DependentUpon>202011261734246_002.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProjectInstaller.cs">
@@ -205,7 +209,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="StorageType.cs" />
-    <Compile Include="User.cs" />
+    <Compile Include="Storage\Entity.cs" />
+    <Compile Include="Storage\MessageHistory.cs" />
+    <Compile Include="Storage\User.cs" />
     <Compile Include="Users.cs">
       <DependentUpon>DBFirst.tt</DependentUpon>
     </Compile>
@@ -254,6 +260,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202011191756517_001.resx">
       <DependentUpon>202011191756517_001.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202011261734246_002.resx">
+      <DependentUpon>202011261734246_002.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectInstaller.resx">
       <DependentUpon>ProjectInstaller.cs</DependentUpon>

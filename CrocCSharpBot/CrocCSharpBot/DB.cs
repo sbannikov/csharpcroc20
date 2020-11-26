@@ -26,7 +26,12 @@ namespace CrocCSharpBot
         /// <summary>
         /// Список пользователей
         /// </summary>
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Storage.User> Users { get; set; }
+
+        /// <summary>
+        /// История сообщений пользователей
+        /// </summary>
+        public virtual DbSet<Storage.MessageHistory> Messages { get; set; }
 
         /// <summary>
         /// Индексатор по идентификатору пользователя
@@ -37,11 +42,11 @@ namespace CrocCSharpBot
         {
             get
             {
-                User u = Users.Where(x => x.ID == id).FirstOrDefault();
+                Storage.User u = Users.Where(x => x.ID == id).FirstOrDefault();
                 if (u == null)
                 {
                     // Создание нового пользователя; всё, что мы знаем - его идентификатор
-                    u = new User()
+                    u = new Storage.User()
                     {
                         ID = id,
                         TimeStamp = DateTime.Now

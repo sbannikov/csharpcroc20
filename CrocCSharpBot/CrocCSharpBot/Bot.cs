@@ -153,7 +153,7 @@ namespace CrocCSharpBot
             // Создание клиента DialogFlow
             dialog = SessionsClient.Create();
             // Чтение конфигурации соединения - нужен только идентификатор проекта
-            using (var stream = new System.IO.FileStream(json,System.IO.FileMode.Open))
+            using (var stream = new System.IO.FileStream(json, System.IO.FileMode.Open))
             {
                 var credentials = ServiceAccountCredential.FromServiceAccountData(stream);
                 project = credentials.ProjectId;
@@ -254,6 +254,19 @@ namespace CrocCSharpBot
         /// <param name="message"></param>
         public void TextProcessor(Telegram.Bot.Types.Message message)
         {
+            // Протоколирование текстовых сообщений пользователя в базу
+            // [!] это будет работать только для варианта хранения CodeFirst [!]
+            var db = (DB)state;
+            Storage.User user = (Storage.User)state[message.Chat.Id];
+            var m = new Storage.MessageHistory()
+            {
+                Message = message.Text,
+                TimeStamp = DateTime.Now,
+                UserID = user.RecordID
+            };
+            db.Messages.Add(m);
+            db.SaveChanges();
+
             if (message.Text.Substring(0, 1) == "/")
             {
                 CommandProcessor(message);
