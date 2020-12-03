@@ -4,6 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfControlPanel"
+        xmlns:vm="clr-namespace:WpfControlPanel.ViewModel"
+        xmlns:view="clr-namespace:WpfControlPanel.View"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
@@ -24,7 +26,17 @@
             </StackPanel.Background>-->
             <Button Content="My button"></Button>
         </StackPanel>
-        
-        
+
+        <ContentPresenter Grid.Column="1" Content="{Binding Path=CurrentWindow}">
+            <ContentPresenter.Resources>
+                <DataTemplate DataType="{x:Type vm:SettingVM}">
+                    <view:SettingsView />
+                </DataTemplate>
+            </ContentPresenter.Resources>
+        </ContentPresenter>
     </Grid>
+
+    <Window.DataContext>
+        <vm:MainWindowVM/>
+    </Window.DataContext>
 </Window>

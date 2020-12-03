@@ -4,9 +4,18 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:WpfControlPanel.View"
+             xmlns:vm="clr-namespace:WpfControlPanel.ViewModel"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
-            
-    </Grid>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel>
+            <materialDesign:Card Padding="12 12 12 12" Margin="12 12 12 12">
+                <StackPanel>
+                    <TextBlock Text="Частота обновления" Style="{StaticResource MaterialDesignHeadline5TextBlock}"/>
+                    <materialDesign:TimePicker SelectedTime="{Binding Path=RefreshTimeSpan}" Is24Hours="True" WithSeconds="True"/>
+                </StackPanel>
+            </materialDesign:Card>
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>
