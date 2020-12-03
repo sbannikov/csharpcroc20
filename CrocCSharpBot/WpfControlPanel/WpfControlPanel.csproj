@@ -64,12 +64,17 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Command\RelayCommand.cs" />
+    <Compile Include="Model\EventModel.cs" />
     <Compile Include="ViewModel\CrocVM.cs" />
+    <Compile Include="ViewModel\EventsVM.cs" />
     <Compile Include="ViewModel\MainWindowVM.cs" />
     <Compile Include="ViewModel\SettingVM.cs" />
     <Compile Include="ViewModel\ViewModelBase.cs" />
     <Compile Include="View\CrocView.xaml.cs">
       <DependentUpon>CrocView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\EventsView.xaml.cs">
+      <DependentUpon>EventsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\SettingsView.xaml.cs">
       <DependentUpon>SettingsView.xaml</DependentUpon>
@@ -87,6 +92,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\CrocView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\EventsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -15,6 +15,7 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel>
+            <Button Content="События" Command="{Binding Path=OpenEventsCommand}" />
             <Button Content="CROC" Command="{Binding Path=OpenCrocCommand}" />
             <Button Content="Settings" Command="{Binding Path=OpenSettingsCommand}"/>
         </StackPanel>
@@ -26,6 +27,9 @@
                 </DataTemplate>
                 <DataTemplate DataType="{x:Type vm:CrocVM}">
                     <view:CrocView/>
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:EventsVM}">
+                    <view:EventsView/>
                 </DataTemplate>
             </ContentPresenter.Resources>
         </ContentPresenter>
