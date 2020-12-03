@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="WpfControlPanel.View.CrocView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WpfControlPanel.View"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.Background>
+            <LinearGradientBrush StartPoint="0, 1" EndPoint="1, 0">
+                <GradientStop Color="#00a460" Offset="0"/>
+                <GradientStop Color="#343a88" Offset="0.25"/>
+                <GradientStop Color="#50109e" Offset="0.50"/>
+                <GradientStop Color="#93278f" Offset="0.75"/>
+                <GradientStop Color="#ea6627" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <TextBlock Text="CROC" 
+                   Foreground="White" FontSize="78" FontWeight="Bold"
+                   VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    </Grid>
+</UserControl>

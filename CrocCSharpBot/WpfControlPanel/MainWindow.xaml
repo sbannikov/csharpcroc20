@@ -15,22 +15,17 @@
         </Grid.ColumnDefinitions>
 
         <StackPanel>
-            <!--<StackPanel.Background>
-                <LinearGradientBrush StartPoint="0, 1" EndPoint="1, 0">
-                    <GradientStop Color="#00a460" Offset="0"/>
-                    <GradientStop Color="#343a88" Offset="0.25"/>
-                    <GradientStop Color="#50109e" Offset="0.50"/>
-                    <GradientStop Color="#93278f" Offset="0.75"/>
-                    <GradientStop Color="#ea6627" Offset="1"/>
-                </LinearGradientBrush>
-            </StackPanel.Background>-->
-            <Button Content="My button"></Button>
+            <Button Content="CROC" Command="{Binding Path=OpenCrocCommand}" />
+            <Button Content="Settings" Command="{Binding Path=OpenSettingsCommand}"/>
         </StackPanel>
 
         <ContentPresenter Grid.Column="1" Content="{Binding Path=CurrentWindow}">
             <ContentPresenter.Resources>
                 <DataTemplate DataType="{x:Type vm:SettingVM}">
                     <view:SettingsView />
+                </DataTemplate>
+                <DataTemplate DataType="{x:Type vm:CrocVM}">
+                    <view:CrocView/>
                 </DataTemplate>
             </ContentPresenter.Resources>
         </ContentPresenter>

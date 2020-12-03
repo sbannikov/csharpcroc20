@@ -12,23 +12,17 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using WpfControlPanel.ViewModel;
 
-namespace WpfControlPanel
+namespace WpfControlPanel.View
 {
     /// <summary>
-    /// Логика взаимодействия для MainWindow.xaml
+    /// Логика взаимодействия для CrocView.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class CrocView : UserControl
     {
-        public MainWindow()
+        public CrocView()
         {
             InitializeComponent();
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            ((MainWindowVM)this.DataContext).CurrentWindow = new CrocVM();
         }
     }
 }
