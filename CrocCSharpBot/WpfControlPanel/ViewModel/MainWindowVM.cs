@@ -20,10 +20,16 @@ namespace WpfControlPanel.ViewModel
 
         public MainWindowVM()
         {
+            OpenEventsCommand = new RelayCommand(
+                obj => CurrentWindow = new EventsVM(
+                    new SettingVM().RefreshTimeSpan
+                    )
+                );
             OpenCrocCommand = new RelayCommand(obj => CurrentWindow = new CrocVM());
             OpenSettingsCommand = new RelayCommand(obj => CurrentWindow = new SettingVM());
         }
 
+        public ICommand OpenEventsCommand { get; set; }
         public ICommand OpenCrocCommand { get; set; }
         public ICommand OpenSettingsCommand { get; set; }
     }
